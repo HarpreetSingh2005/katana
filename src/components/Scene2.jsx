@@ -1,44 +1,44 @@
-import React, { useEffect, useRef } from 'react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import AshParticles from './AshParticles';
+import React, { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import AshParticles from "./AshParticles";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const TEXTS = [
   {
-    headline: 'It Begins With Intent',
-    sub: 'The mind moves before the blade does.',
+    headline: "It Begins With Intent",
+    sub: "The mind moves before the blade does.",
   },
   {
-    headline: 'Forged in Fire',
-    sub: 'A thousand folds — a thousand choices made.',
+    headline: "Forged in Fire",
+    sub: "A thousand folds — a thousand choices made.",
   },
   {
-    headline: 'Shaped by Discipline',
-    sub: 'Every edge is a year of silence and sacrifice.',
+    headline: "Shaped by Discipline",
+    sub: "Every edge is a year of silence and sacrifice.",
   },
   {
-    headline: 'Balance Defines the Strike',
-    sub: 'Not strength. Not speed. Precision alone.',
+    headline: "Balance Defines the Strike",
+    sub: "Not strength. Not speed. Precision alone.",
   },
 ];
 
 export default function Scene2() {
-  const containerRef  = useRef(null);
-  const trackRef      = useRef(null);
+  const containerRef = useRef(null);
+  const trackRef = useRef(null);
   const energyLineRef = useRef(null);
-  const heatLayerRef  = useRef(null);
-  const bloomRef      = useRef(null);
-  const textRefs      = useRef([]);
+  const heatLayerRef = useRef(null);
+  const bloomRef = useRef(null);
+  const textRefs = useRef([]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: containerRef.current,
-          start: 'top top',
-          end: '+=400%',
+          start: "top top",
+          end: "+=400%",
           scrub: 1,
           pin: true,
           invalidateOnRefresh: true,
@@ -46,30 +46,36 @@ export default function Scene2() {
       });
 
       // ── Horizontal pan across the blade ──────────────────────────
-      tl.to(trackRef.current, { xPercent: -60, ease: 'none', duration: 1 }, 0);
+      tl.to(trackRef.current, { xPercent: -60, ease: "none", duration: 1 }, 0);
 
       // ── Micro-camera scale (subtle depth) ────────────────────────
-      tl.to(containerRef.current, { scale: 1.03, ease: 'none', duration: 1 }, 0);
+      tl.to(
+        containerRef.current,
+        { scale: 1.03, ease: "none", duration: 1 },
+        0,
+      );
 
       // ── Energy line: travels left → right ────────────────────────
-      tl.fromTo(energyLineRef.current,
-        { left: '-5%', opacity: 0 },
-        { left: '100%', opacity: 1, ease: 'none', duration: 1 },
-        0
+      tl.fromTo(
+        energyLineRef.current,
+        { left: "-5%", opacity: 0 },
+        { left: "100%", opacity: 1, ease: "none", duration: 1 },
+        0,
       );
 
       // ── Heat distortion layer follows energy line ─────────────────
-      tl.fromTo(heatLayerRef.current,
-        { left: '-15%', opacity: 0 },
-        { left: '90%',  opacity: 0.6, ease: 'none', duration: 1 },
-        0
+      tl.fromTo(
+        heatLayerRef.current,
+        { left: "-15%", opacity: 0 },
+        { left: "90%", opacity: 0.6, ease: "none", duration: 1 },
+        0,
       );
 
       // ── Text reveals: in → hold → out ────────────────────────────
       const beats = [
-        [0.05, 0.20],
+        [0.05, 0.2],
         [0.25, 0.45],
-        [0.50, 0.70],
+        [0.5, 0.7],
         [0.75, 0.92],
       ];
 
@@ -77,19 +83,38 @@ export default function Scene2() {
         const el = textRefs.current[i];
         if (!el) return;
         gsap.set(el, { y: 30, opacity: 0 });
-        tl.to(el, { opacity: 1, y: 0,   duration: 0.10, ease: 'power2.out' }, inAt);
-        tl.to(el, { opacity: 0, y: -20, duration: 0.08, ease: 'power2.in'  }, outAt);
+        tl.to(
+          el,
+          { opacity: 1, y: 0, duration: 0.1, ease: "power2.out" },
+          inAt,
+        );
+        tl.to(
+          el,
+          { opacity: 0, y: -20, duration: 0.08, ease: "power2.in" },
+          outAt,
+        );
       });
 
       // ── Exit: energy line brightens then bloom flash ──────────────
-      tl.to(energyLineRef.current, {
-        boxShadow: '0 0 40px 15px rgba(212,175,55,0.7)',
-        duration: 0.05,
-        ease: 'power2.in',
-      }, 0.93);
-      tl.to(bloomRef.current, { opacity: 0.55, duration: 0.04, ease: 'power2.in'  }, 0.96);
-      tl.to(bloomRef.current, { opacity: 0,    duration: 0.04, ease: 'power2.out' }, 1.00);
-
+      tl.to(
+        energyLineRef.current,
+        {
+          boxShadow: "0 0 40px 15px rgba(212,175,55,0.7)",
+          duration: 0.05,
+          ease: "power2.in",
+        },
+        0.93,
+      );
+      tl.to(
+        bloomRef.current,
+        { opacity: 0.55, duration: 0.04, ease: "power2.in" },
+        0.96,
+      );
+      tl.to(
+        bloomRef.current,
+        { opacity: 0, duration: 0.04, ease: "power2.out" },
+        1.0,
+      );
     }, containerRef);
 
     return () => ctx.revert();
@@ -97,10 +122,9 @@ export default function Scene2() {
 
   return (
     <div className="scene" id="scene2" ref={containerRef}>
-
       {/* Wide katana image — horizontal pan */}
       <img
-        src="/assets/images/scene 3.jpg"
+        src="/assets/images/scene3.jpg"
         className="katana-track"
         alt="Katana blade reveal"
         ref={trackRef}
@@ -120,7 +144,7 @@ export default function Scene2() {
         <div
           key={i}
           className="blade-text"
-          ref={el => (textRefs.current[i] = el)}
+          ref={(el) => (textRefs.current[i] = el)}
         >
           <span className="blade-text__headline">{t.headline}</span>
           <span className="blade-text__rule" />
@@ -130,7 +154,6 @@ export default function Scene2() {
 
       {/* Exit bloom flash */}
       <div className="light-bloom" ref={bloomRef} />
-
     </div>
   );
 }
