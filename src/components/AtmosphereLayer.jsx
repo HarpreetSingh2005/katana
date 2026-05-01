@@ -22,7 +22,7 @@ const ParticleSystem = () => {
   }, [particleCount]);
 
   useFrame((state) => {
-    const time = state.clock.getElapsedTime();
+    const time = state.clock.elapsedTime;
     if (pointsRef.current) {
       const positionsAttr = pointsRef.current.geometry.attributes.position;
       
@@ -68,7 +68,7 @@ const ParticleSystem = () => {
 export default function AtmosphereLayer() {
   return (
     <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 8 }}>
-      <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
+      <Canvas camera={{ position: [0, 0, 5], fov: 50 }} clock={new THREE.Clock()}>
         <ParticleSystem />
       </Canvas>
       

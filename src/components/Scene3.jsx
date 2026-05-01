@@ -1,124 +1,111 @@
 import React, { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import AshParticles from './AshParticles';
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function Scene3() {
   const containerRef = useRef(null);
-  const videoRef = useRef(null);
-  const fogRef = useRef(null);
-  const embersRef = useRef(null);
-  const titleRef = useRef(null);
+  const canvasRef = useRef(null);
+  const overlayRef = useRef(null);
+  const sweepRef = useRef(null);
+  const textRef = useRef(null);
   const bloomRef = useRef(null);
 
   useEffect(() => {
-    // Create Embers
-    if (embersRef.current && embersRef.current.children.length === 0) {
-      for (let i = 0; i < 50; i++) {
-        const ember = document.createElement('div');
-        ember.className = 'ember';
-        ember.style.left = `${Math.random() * 100}%`;
-        ember.style.bottom = '-10px';
-        embersRef.current.appendChild(ember);
-      }
-    }
-
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: containerRef.current,
           start: 'top top',
-          end: '+=300%',
+          end: '+=400%', // 6 phases across long scroll
           scrub: 1,
           pin: true,
           invalidateOnRefresh: true,
         },
       });
 
-      // Video with pullback
-      tl.fromTo(videoRef.current,
-        { scale: 1.3 },
-        {
-          currentTime: () => videoRef.current?.duration || 10,
-          scale: 1,
-          duration: 1.1,
-          ease: 'none'
-        }, 0);
+      // Initially set the image slightly dimmed
+      gsap.set(canvasRef.current, { opacity: 0.85, scale: 1, yPercent: 0 });
 
-      // Atmospheric fog
-      tl.to(fogRef.current, {
-        opacity: 0.7,
-        duration: 0.3,
-        ease: 'power1.inOut'
-      }, 0.2);
+      // === PHASE 1: ENTRY (0 -> 0.15) ===
+      tl.to(canvasRef.current, { scale: 1.05, opacity: 1, duration: 0.15, ease: 'power1.inOut' }, 0);
 
-      // Epic embers
-      const embers = embersRef.current.querySelectorAll('.ember');
-      embers.forEach((ember, i) => {
-        tl.to(ember, {
-          opacity: Math.random() * 0.9 + 0.5,
-          y: -Math.random() * 800 - 500,
-          x: (Math.random() - 0.5) * 300,
-          duration: 0.7,
-          ease: 'power1.out'
-        }, i * 0.008);
-      });
+      // === PHASE 2: SWORD 1 FOCUS (0.15 -> 0.35) ===
+      tl.to(canvasRef.current, { scale: 1.5, yPercent: 25, duration: 0.2, ease: 'power2.inOut' }, 0.15);
+      tl.to(overlayRef.current, { opacity: 1, duration: 0.2, ease: 'power1.inOut' }, 0.15);
+      
+      // Light Sweep
+      tl.fromTo(sweepRef.current, 
+        { x: '-50vw', opacity: 0 }, 
+        { x: '150vw', opacity: 0.8, duration: 0.15, ease: 'power1.inOut' }, 
+        0.2
+      );
 
-      // Title reveal
-      tl.to(titleRef.current, {
-        opacity: 1,
-        scale: 1.1,
-        duration: 0.4,
-        ease: 'power2.out'
-      }, 0.4);
+      // Text reveal
+      tl.to(textRef.current, { opacity: 1, y: -20, duration: 0.1, ease: 'power2.out' }, 0.2);
 
-      // Final bloom
-      tl.to(bloomRef.current, {
-        opacity: 0.5,
-        duration: 0.3,
-        ease: 'power1.inOut'
-      }, 0.5);
+      // === PHASE 3: SWORD 2 FOCUS (0.35 -> 0.55) ===
+      tl.to(canvasRef.current, { yPercent: 0, duration: 0.2, ease: 'power2.inOut' }, 0.35);
+      tl.to(textRef.current, { opacity: 0, y: -50, duration: 0.1, ease: 'power2.in' }, 0.35);
+      
+      // Reset and trigger light sweep again
+      tl.fromTo(sweepRef.current, 
+        { x: '-50vw', opacity: 0 }, 
+        { x: '150vw', opacity: 0.6, duration: 0.15, ease: 'power1.inOut' }, 
+        0.4
+      );
 
-      // Dramatic ending
-      tl.to(titleRef.current, {
-        scale: 1.2,
-        duration: 0.3,
-        ease: 'power2.inOut'
-      }, 0.7);
+      // === PHASE 4: SWORD 3 FOCUS (0.55 -> 0.75) ===
+      tl.to(canvasRef.current, { yPercent: -23, duration: 0.2, ease: 'power2.inOut' }, 0.55);
 
-      tl.to(bloomRef.current, {
-        opacity: 0.8,
-        duration: 0.2,
-        ease: 'power2.in'
-      }, 0.9);
+      // === PHASE 5: SWORD 4 FOCUS (0.75 -> 0.90) ===
+      tl.to(canvasRef.current, { yPercent: -50, scale: 1.6, duration: 0.15, ease: 'power2.inOut' }, 0.75);
+      
+      // Final sweep
+      tl.fromTo(sweepRef.current, 
+        { x: '-50vw', opacity: 0 }, 
+        { x: '150vw', opacity: 0.9, duration: 0.15, ease: 'power1.inOut' }, 
+        0.8
+      );
+
+      // === PHASE 6: MERGE & ZOOM OUT (0.90 -> 1.0) ===
+      tl.to(canvasRef.current, { yPercent: 0, scale: 1, opacity: 0.85, duration: 0.1, ease: 'power2.inOut' }, 0.9);
+      tl.to(overlayRef.current, { opacity: 0, duration: 0.1, ease: 'power1.inOut' }, 0.9);
+
+      // === EXIT TRANSITION: BLOOM FLASH ===
+      tl.to(bloomRef.current, { opacity: 0.6, duration: 0.05, ease: 'power2.in' }, 0.95);
+      tl.to(bloomRef.current, { opacity: 0, duration: 0.05, ease: 'power2.out' }, 1.0);
 
     }, containerRef);
-
-    if (videoRef.current) {
-      if (videoRef.current.readyState >= 1) {
-        ScrollTrigger.refresh();
-      } else {
-        videoRef.current.addEventListener('loadedmetadata', () => ScrollTrigger.refresh());
-      }
-    }
 
     return () => ctx.revert();
   }, []);
 
   return (
-    <div className="scene" id="scene3" ref={containerRef}>
-      <video className="scene-video" ref={videoRef} muted playsInline preload="auto">
-        <source src="/assets/videos/video3-optimized.mp4" type="video/mp4" />
-      </video>
-      <div className="scene-overlay"></div>
-      <div className="atmospheric-fog" ref={fogRef}></div>
-      <div className="embers-container" id="embersContainer3" ref={embersRef}></div>
-      <div className="light-bloom" id="bloom3" ref={bloomRef}></div>
-      <div className="myth-title" ref={titleRef}>
-        <div className="myth-kanji">無心</div>
-        <div className="myth-subtitle">Mu Shin — No Mind</div>
+    <div className="scene" id="scene3" ref={containerRef} style={{ overflow: 'hidden', background: '#050505' }}>
+      
+      <div className="sword-canvas-container" ref={canvasRef}>
+        <img 
+          src="/assets/images/multiple swords.png" 
+          className="sword-canvas" 
+          alt="Katana Forms" 
+        />
       </div>
+
+      <div className="focus-overlay" ref={overlayRef}></div>
+      
+      <div className="light-sweep" ref={sweepRef} style={{ top: '35%', height: '30%' }}></div>
+
+      <AshParticles opacity={0.15} />
+
+      <div className="scene3-text" ref={textRef}>
+        Each form carries its own purpose.
+      </div>
+
+      <div className="light-bloom" ref={bloomRef}></div>
+
     </div>
   );
 }

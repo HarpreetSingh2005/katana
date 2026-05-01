@@ -214,7 +214,7 @@ body {
 
 .scene1-bg {
   position: absolute;
-  top: 52%;
+  top: 50%;
   left: 50%;
   width: 100vw;
   height: 100vh;
@@ -277,13 +277,14 @@ body {
 /* === SCENE 2: ESSENCE === */
 #scene2 {
   background: #000;
+  will-change: transform;
 }
 
 .scene2-bg {
   position: absolute;
-  width: 105vw;
+  width: 110vw;
   height: 110vh;
-  top: 48%;
+  top: 46%;
   left: 50%;
   transform: translate(-50%, -50%);
   opacity: 1;
@@ -291,61 +292,156 @@ body {
   z-index: 7; 
 }
 
-.text-sequence {
+/* Katana Track — wide image for horizontal panning */
+.katana-track {
   position: absolute;
-  width: 100%;
-  height: 100%;
+  top: 0;
+  left: 0;
+  width: 250vw;
+  height: 100vh;
+  object-fit: cover;
+  z-index: 1;
+  will-change: transform;
+}
+
+/* Energy Line — travels along the blade edge */
+.energy-line {
+  position: absolute;
+  top: 50%;
+  left: -5%;
+  width: 3px;
+  height: 60%;
+  transform: translateY(-50%);
+  background: linear-gradient(180deg, transparent 0%, rgba(212, 175, 55, 0.6) 30%, rgba(255, 200, 60, 0.9) 50%, rgba(212, 175, 55, 0.6) 70%, transparent 100%);
+  box-shadow: 0 0 12px 4px rgba(212, 175, 55, 0.3);
+  filter: blur(1px);
+  opacity: 0;
+  z-index: 4;
+  pointer-events: none;
+  will-change: left, opacity;
+}
+
+/* Reactive Heat Distortion — follows energy line */
+.heat-layer {
+  position: absolute;
+  top: 30%;
+  left: -15%;
+  width: 10vw;
+  height: 40%;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0;
+  background: transparent;
+  filter: url(#heat-distortion-scene2);
+  backdrop-filter: blur(0.5px);
+  will-change: left, opacity;
+}
+
+/* Text Words — positioned at corners */
+.text-word {
+  position: absolute;
+  font-family: 'Cinzel', serif;
+  font-size: clamp(18px, 3vw, 36px);
+  letter-spacing: clamp(3px, 0.8vw, 10px);
+  font-weight: 300;
+  color: var(--soft-white);
+  opacity: 0;
+  text-transform: none;
+  text-shadow: 0 0 30px rgba(0, 0, 0, 0.9), 0 0 60px rgba(0, 0, 0, 0.5);
   pointer-events: none;
   z-index: 10;
 }
 
-.text-word {
-  position: absolute;
-  font-family: 'Cinzel', serif;
-  font-size: clamp(28px, 5vw, 64px);
-  letter-spacing: clamp(4px, 1vw, 12px);
-  font-weight: 400;
-  color: var(--soft-white);
-  opacity: 0;
-  text-transform: uppercase;
-  text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
-}
-
 .text-word.top-left {
-  top: 15%;
-  left: 10%;
+  top: 18%;
+  left: 8%;
 }
 
 .text-word.top-right {
-  top: 15%;
-  right: 10%;
+  top: 18%;
+  right: 8%;
 }
 
 .text-word.bottom-left {
-  bottom: 15%;
-  left: 10%;
+  bottom: 18%;
+  left: 8%;
 }
 
 .text-word.bottom-right {
-  bottom: 15%;
-  right: 10%;
+  bottom: 18%;
+  right: 8%;
 }
 
-.blade-highlight {
+/* Light Bloom — exit transition flash */
+.light-bloom {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 80%;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, var(--gold-light), transparent);
+  width: 200%;
+  height: 200%;
   transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.4) 0%, rgba(255, 255, 255, 0.15) 30%, transparent 60%);
   opacity: 0;
-  filter: blur(1px);
+  pointer-events: none;
+  z-index: 15;
 }
 
-/* === SCENE 3: MYTH === */
+/* === SCENE 3: FORM / VARIATIONS === */
 #scene3 {
   background: #050505;
+  will-change: transform;
+}
+
+.sword-canvas-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  will-change: transform;
+}
+
+.sword-canvas {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.focus-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.8) 25%, rgba(0,0,0,0) 45%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.8) 75%, rgba(0,0,0,0.95) 100%);
+  opacity: 0; /* starts invisible */
+  pointer-events: none;
+  z-index: 5;
+}
+
+.scene3-text {
+  position: absolute;
+  top: 10%;
+  width: 100%;
+  text-align: center;
+  font-family: 'Cinzel', serif;
+  font-size: clamp(20px, 3.5vw, 42px);
+  letter-spacing: clamp(6px, 1.5vw, 16px);
+  font-weight: 300;
+  color: var(--soft-white);
+  opacity: 0;
+  text-transform: uppercase;
+  text-shadow: 0 0 30px rgba(0, 0, 0, 0.9);
+  z-index: 10;
+}
+
+/* === SCENE 4: MYTH (SAMURAI & DRAGON) === */
+#scene4 {
+  background: #000;
+  perspective: 1000px;
 }
 
 .myth-title {
@@ -356,25 +452,27 @@ body {
   text-align: center;
   opacity: 0;
   z-index: 10;
+  width: 100%;
 }
 
 .myth-kanji {
-  font-size: clamp(100px, 18vw, 220px);
+  font-family: 'Cinzel', serif;
+  font-size: clamp(80px, 15vw, 180px);
   font-weight: 300;
   color: var(--gold);
-  margin-bottom: 30px;
-  text-shadow: 0 0 60px rgba(212, 175, 55, 0.6);
-  letter-spacing: 15px;
+  margin-bottom: 20px;
+  text-shadow: 0 0 50px rgba(212, 175, 55, 0.5), 0 0 100px rgba(0, 0, 0, 1);
+  letter-spacing: 20px;
 }
 
 .myth-subtitle {
   font-family: 'Cinzel', serif;
-  font-size: clamp(20px, 3.5vw, 42px);
-  letter-spacing: clamp(6px, 1.5vw, 16px);
+  font-size: clamp(18px, 3vw, 32px);
+  letter-spacing: clamp(8px, 2vw, 18px);
   font-weight: 300;
   color: var(--soft-white);
   text-transform: uppercase;
-  text-shadow: 0 0 30px rgba(255, 255, 255, 0.4);
+  text-shadow: 0 0 30px rgba(0, 0, 0, 1);
 }
 
 .atmospheric-fog {
@@ -383,23 +481,9 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(ellipse at 50% 50%, rgba(139, 0, 0, 0.1) 0%, transparent 70%);
+  background: radial-gradient(circle at 50% 40%, rgba(20, 20, 20, 0.4) 0%, rgba(0, 0, 0, 0.8) 70%);
   opacity: 0;
   pointer-events: none;
-}
-
-/* === TRANSITION EFFECTS === */
-.light-bloom {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 200%;
-  height: 200%;
-  transform: translate(-50%, -50%);
-  background: radial-gradient(circle, rgba(212, 175, 55, 0.3) 0%, transparent 50%);
-  opacity: 0;
-  pointer-events: none;
-  z-index: 1;
 }
 
 /* === RESPONSIVE === */
